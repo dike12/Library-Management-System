@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, '../')
 
 from database import init_database, get_db_connection
-from library_service import add_book_to_catalog
+from services.library_service import add_book_to_catalog
 
 
 class TestAddBookToCatalog:

@@ -5,6 +5,7 @@ Contains all the core business logic for the Library Management System
 
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
+from .payment_service import PaymentGateway
 from database import (
     get_book_by_id, get_book_by_isbn, get_patron_borrow_count,
     insert_book, insert_borrow_record, update_book_availability,
@@ -391,3 +392,59 @@ def get_patron_status_report(patron_id: str) -> Dict:
     
     finally:
         conn.close()
+
+
+def pay_late_fees(patron_id: str, book_id: int, payment_gateway: PaymentGateway) -> Dict:
+    """
+    Process payment of late fees for a specific book.
+    
+    Args:
+        patron_id: 6-digit library card ID
+        book_id: ID of the book with late fees
+        payment_gateway: PaymentGateway instance for processing payment
+        
+    Returns:
+        dict: Contains success status and message
+    """
+    # Validate patron ID format
+    if not patron_id or not patron_id.isdigit() or len(patron_id) != 6:
+        return {"success": False, "message": "Invalid patron ID"}
+    
+    # Get book information
+    book = get_book_by_id(book_id)
+    if not book:
+        return {"success": False, "message": "Book not found"}
+    
+    # Calculate late fees
+    fee_info = calculate_late_fee_for_book(patron_id, book_id)
+    
+    # Check if there are any fees to pay
+    if fee_info['status'] != 'Late fee calculated':
+        return {"success": False, "message": fee_info['status']}
+    
+    if fee_info['fee_amount'] <= 0:
+        return {"success": False, "message": "No fees to pay"}
+    
+    # Process payment through gateway
+    try:
+        return payment_gateway.process_payment(patron_id, fee_info['fee_amount'])
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+def refund_late_fee_payment(transaction_id: str, amount: float, payment_gateway: PaymentGateway) -> Dict:
+    """
+    Process refund of late fee payment.
+    
+    Args:
+        transaction_id: Transaction ID to refund
+        amount: Amount to refund
+        payment_gateway: PaymentGateway instance for processing refund
+        
+    Returns:
+        dict: Contains success status and message
+    """
+    try:
+        return payment_gateway.refund_payment(transaction_id, amount)
+    except Exception as e:
+        return {"success": False, "message": str(e)}

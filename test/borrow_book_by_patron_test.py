@@ -4,7 +4,7 @@ sys.path.insert(0, '../')
 
 from database import init_database
 from datetime import datetime, timedelta
-from library_service import borrow_book_by_patron
+from services.library_service import borrow_book_by_patron
 
 
 class TestBorrowBookByPatron:

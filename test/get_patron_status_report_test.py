@@ -4,7 +4,7 @@ sys.path.insert(0, '../')
 
 from database import init_database, get_db_connection
 from datetime import datetime, timedelta
-from library_service import get_patron_status_report, borrow_book_by_patron
+from services.library_service import get_patron_status_report, borrow_book_by_patron
 
 class TestPatronStatusReport:
     """Test suite for R7: Patron Status Report functionality"""

@@ -5,7 +5,7 @@ sys.path.insert(0, '../')
 from database import init_database, get_db_connection
 init_database()
 
-from library_service import search_books_in_catalog
+from services.library_service import search_books_in_catalog
 
 class TestSearchBooksValidation:
     """Test search parameter validation"""

@@ -5,7 +5,7 @@ sys.path.insert(0, '../')
 from database import init_database, get_db_connection
 from datetime import datetime, timedelta
 
-from library_service import return_book_by_patron
+from services.library_service import return_book_by_patron
 
 class TestReturnBookValidation:
     """Test patron ID and book ID validation requirements"""
@@ -14,7 +14,7 @@ class TestReturnBookValidation:
         """Setup test environment before each test"""
         init_database()
         # Borrow books for testing returns
-        from library_service import borrow_book_by_patron
+        from services.library_service import borrow_book_by_patron
         borrow_book_by_patron("123456", 1)  # Borrow book ID 1
         borrow_book_by_patron("654321", 2)  # Borrow book ID 2
     
@@ -160,7 +160,7 @@ class TestReturnBookValidation:
         Positive test: Verify book availability is updated after return
         Expected: Success and available copies increased
         """
-        from library_service import get_book_by_id
+        from services.library_service import get_book_by_id
         
         # Get initial availability
         initial_book = get_book_by_id(1)

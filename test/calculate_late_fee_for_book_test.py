@@ -5,7 +5,7 @@ sys.path.insert(0, '../')
 from database import init_database, get_db_connection
 from datetime import datetime, timedelta
 
-from library_service import calculate_late_fee_for_book
+from services.library_service import calculate_late_fee_for_book
 
 class TestLateFeeValidation:
     """Test patron ID and book ID validation"""
@@ -14,7 +14,7 @@ class TestLateFeeValidation:
         """Setup test environment before each test"""
         init_database()
         # Setup borrowed books for testing
-        from library_service import borrow_book_by_patron
+        from services.library_service import borrow_book_by_patron
         
         # Borrow books and manipulate due dates for testing
         borrow_book_by_patron("111111", 1)  # Will be 5 days overdue
@@ -129,7 +129,7 @@ class TestLateFeeValidation:
         Test: Book returned on time
         Expected: No late fee
         """
-        from library_service import borrow_book_by_patron
+        from services.library_service import borrow_book_by_patron
         success, _ = borrow_book_by_patron("333333", 3)  # Fresh borrow
         
         # Skip if borrow failed
@@ -254,7 +254,7 @@ class TestLateFeeValidation:
         Test: Calculate fee for already returned book
         Expected: Error status
         """
-        from library_service import return_book_by_patron
+        from services.library_service import return_book_by_patron
         return_book_by_patron("111111", 1)
         
         result = calculate_late_fee_for_book("111111", 1)
@@ -272,7 +272,7 @@ class TestLateFeeValidation:
         Test: Calculate fee for book not yet due
         Expected: Zero fee
         """
-        from library_service import borrow_book_by_patron
+        from services.library_service import borrow_book_by_patron
         borrow_book_by_patron("555555", 3)  # Fresh borrow with future due date
         
         result = calculate_late_fee_for_book("555555", 3)

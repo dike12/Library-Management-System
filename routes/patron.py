@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from library_service import get_patron_status_report
+from services.library_service import get_patron_status_report
 
 patron = Blueprint('patron', __name__)
 
