@@ -29,26 +29,30 @@ jobs:
         cache: 'pip'
     
     - name: Install dependencies
-      shell: pwsh
       run: |
-        python -m pip install --upgrade pip
-        pip install pytest pytest-cov
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov
+          python - << 'EOF'
+          import pathlib, subprocess, sys
+          req = pathlib.Path("requirements.txt")
+          if req.is_file():
+              subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(req)])
+          EOF
     
     - name: Initialize test database
       run: |
-        python -c "
-        try:
-            from database import init_database, add_sample_data
-            init_database()
-            add_sample_data()
-            print('✅ Database initialized successfully')
-        except Exception as e:
-            print(f'❌ Database initialization failed: {e}')
-            import traceback
-            traceback.print_exc()
-            exit(1)
-        "
+          python - << 'EOF'
+          import traceback
+          try:
+              from database import init_database, add_sample_data
+              init_database()
+              add_sample_data()
+              print("✅ Database initialized successfully")
+          except Exception as e:
+              print(f"❌ Database initialization failed: {e}")
+              traceback.print_exc()
+              raise SystemExit(1)
+          EOF
     
     - name: Run tests with coverage
       run: |
