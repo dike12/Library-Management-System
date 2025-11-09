@@ -46,14 +46,14 @@ jobs:
     - name: Initialize test database
       run: |
           python - << 'EOF'
-          import traceback
+          import traceback, sys
           try:
               from database import init_database, add_sample_data
               init_database()
               add_sample_data()
-              print("✅ Database initialized successfully")
+              print("Database initialized successfully")
           except Exception as e:
-              print(f"❌ Database initialization failed: {e}")
+              print("Database initialization failed:", e, file=sys.stderr)
               traceback.print_exc()
               raise SystemExit(1)
           EOF
