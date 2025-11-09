@@ -61,9 +61,6 @@ jobs:
     - name: Run tests with coverage
       run: |
         python -m pytest test/ -v --cov=./ --cov-report=xml
-
-
-    
     
     - name: Upload test results
       if: always()
@@ -74,3 +71,8 @@ jobs:
           .pytest_cache
           coverage.xml
         retention-days: 7
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
